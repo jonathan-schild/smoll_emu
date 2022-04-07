@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2022 Jonathan Schild - All Rights Reserved
+ */
+
+use super::decoder::*;
+use super::Processor;
+
+pub(super) fn adc(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn and(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bbr(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bbs(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bcc(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bcs(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn beq(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bit(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bmi(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bne(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bpl(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bra(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn brk(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bvc(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn bvs(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn clc(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn cld(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn cli(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn clv(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn cmp(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn cpx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn cpy(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn dec(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn dex(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn dey(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn eor(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn inc(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn inx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn iny(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn jmp(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn jsr(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn lda(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn ldx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn ldy(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn lsr(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn nop(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn ora(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn pha(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn php(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn phx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn phy(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn pla(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn plp(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn plx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn ply(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn rmb(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn rol(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn ror(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn rti(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn rts(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn sbc(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn sec(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn sed(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn sei(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn smb(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn sta(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn stp(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn stx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn sty(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn stz(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn tax(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn tay(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn trb(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn tsb(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn tsx(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn txa(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn txs(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn tya(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn wai(p: &mut Processor, a: AddressingModes, opcode: u8) {}
+pub(super) fn unknown(p: &mut Processor, a: AddressingModes, opcode: u8) {}

@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2022 Jonathan Schild - All Rights Reserved
+ */
+
+mod peripheral_devices;
+mod processor;
+
 #[cfg(test)]
 mod tests {
     #[test]
