@@ -26,6 +26,7 @@ pub(super) enum AddressingModes {
 }
 
 fn decode(opcode: u8) -> (fn(&mut Processor, AddressingModes, u8), AddressingModes) {
+    // TODO
     match opcode {
         0x00 => (unknown, AddressingModes::Unknown),
         0x01 => (unknown, AddressingModes::Unknown),
