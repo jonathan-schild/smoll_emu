@@ -6,6 +6,8 @@ use super::decoder::*;
 use super::MMIOInterface;
 use super::Processor;
 
+const sign_bit: u8 = 7;
+
 pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
@@ -27,7 +29,7 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let result_c = p.get_a().wrapping_add(carry);
     let result = result_c.wrapping_add(operand);
 
-    let negative = is_bit_set_at(result, 7);
+    let negative = is_bit_set_at(result, sign_bit);
 
     // CHECK is this equivalent to the spec?
     let overflow_a = is_overflow(result_c, carry, p.get_a());
@@ -45,8 +47,29 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     p.set_carry(carry_a | carry_b);
 }
 
-pub(super) fn and(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let operand = match a {
+        AddressingModes::Absolute => absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
+        AddressingModes::AbsoluteIndexedWithY => absolute_indexed_with_y(p),
+        AddressingModes::Immediate => immediate(p),
+        AddressingModes::ZeroPage => zero_page(p),
+        AddressingModes::ZeroPageIndexedIndirect => zero_page_indexed_indirect(p),
+        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
+        AddressingModes::ZeroPageIndirect => zero_page_indirect(p),
+        AddressingModes::ZeroPageIndirectIndexedWithY => zero_page_indirect_indexed_with_y(p),
+        _ => return,
+    };
+
+    let result = p.get_a() & operand;
+
+    let negative = is_bit_set_at(result, sign_bit);
+    let zero = result == 0;
+
+    p.set_negative(negative);
+    p.set_zero(zero);
 }
 
 pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
@@ -432,7 +455,7 @@ fn concatenate_address(addr: (u8, u8)) -> u16 {
 /// * `bool` - `true` if bit at `pos` is set.
 ///
 fn is_bit_set_at(value: u8, pos: u8) -> bool {
-    if pos > 7 {
+    if pos > sign_bit {
         false
     } else {
         value >> pos & 0x01 != 0
@@ -454,9 +477,9 @@ fn is_bit_set_at(value: u8, pos: u8) -> bool {
 fn is_overflow(result: u8, operand_a: u8, operand_b: u8) -> bool {
     // TEST
 
-    let a = is_bit_set_at(operand_a, 7);
-    let b = is_bit_set_at(operand_b, 7);
-    let r = is_bit_set_at(result, 7);
+    let a = is_bit_set_at(operand_a, sign_bit);
+    let b = is_bit_set_at(operand_b, sign_bit);
+    let r = is_bit_set_at(result, sign_bit);
 
     // is true if sign bits of a or b are equal and the sign bits of a, b or r are not equal
     (a & b | !a & !b) & !(r & a | !r & !a)
