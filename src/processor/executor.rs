@@ -30,17 +30,19 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let negative = is_bit_set_at(result, 7);
 
     // CHECK is this equivalent to the spec?
-    let overflow = is_overflow(result, result_c, operand);
+    let overflow_a = is_overflow(result_c, carry, p.get_a());
+    let overflow_b = is_overflow(result, result_c, operand);
 
     let zero = result == 0;
 
     // CHECK is this equivalent to the spec?
-    let carry = is_carry(result, result_c, operand);
+    let carry_a = is_carry(result_c, carry, p.get_a());
+    let carry_b = is_carry(result, result_c, operand);
 
     p.set_negative(negative);
-    p.set_overflow(overflow);
+    p.set_overflow(overflow_a | overflow_b);
     p.set_zero(zero);
-    p.set_carry(carry);
+    p.set_carry(carry_a | carry_b);
 }
 
 pub(super) fn and(p: &mut Processor, a: AddressingModes, opcode: u8) {
@@ -473,10 +475,7 @@ fn is_overflow(result: u8, operand_a: u8, operand_b: u8) -> bool {
 /// * `bool` - `true` if a carry occurred.
 ///
 fn is_carry(result: u8, operand_a: u8, operand_b: u8) -> bool {
-    // TEST
-
-    // TODO
-    false
+    (result < operand_a) | (result < operand_b)
 }
 
 #[cfg(test)]
@@ -519,5 +518,21 @@ mod tests {
 
         assert_eq!(false, is_bit_set_at(0xFF, 8));
         assert_eq!(false, is_bit_set_at(0xFF, 0xFF));
+    }
+
+    #[test]
+    fn test_is_carry() {
+        let a: u8 = 0xFF;
+        let b: u8 = 0x01;
+        let c: u8 = 0xFE;
+        let d: u8 = 0x00;
+        let e: u8 = 0x02;
+        let f: u8 = 0x03;
+
+        assert_eq!(true, is_carry(d, a, b));
+        assert_eq!(true, is_carry(c, a, a));
+
+        assert_eq!(false, is_carry(e, b, b));
+        assert_eq!(false, is_carry(f, e, b));
     }
 }
