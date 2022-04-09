@@ -73,7 +73,28 @@ pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
 }
 
 pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let operand = match a {
+        AddressingModes::Absolute => absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
+        AddressingModes::Accumulator => p.get_a(),
+        AddressingModes::ZeroPage => zero_page(p),
+        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
+        _ => return,
+    };
+
+    let result = operand << 1;
+
+    let negative = is_bit_set_at(result, sign_bit);
+    let zero = result == 0;
+    let carry = is_bit_set_at(operand, sign_bit);
+
+    p.set_negative(negative);
+    p.set_zero(zero);
+    p.set_carry(carry);
+
+    p.set_a(result);
 }
 
 pub(super) fn bbr(p: &mut Processor, a: AddressingModes, opcode: u8) {
