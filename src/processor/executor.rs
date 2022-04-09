@@ -45,6 +45,8 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     p.set_overflow(overflow_a | overflow_b);
     p.set_zero(zero);
     p.set_carry(carry_a | carry_b);
+
+    p.set_a(result);
 }
 
 pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
@@ -70,6 +72,8 @@ pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
 
     p.set_negative(negative);
     p.set_zero(zero);
+
+    p.set_a(result);
 }
 
 pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
