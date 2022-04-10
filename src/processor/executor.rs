@@ -233,8 +233,8 @@ pub(super) fn lsr(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn nop(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn nop(_p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    return;
 }
 
 pub(super) fn ora(p: &mut Processor, a: AddressingModes, opcode: u8) {
