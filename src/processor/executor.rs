@@ -6,7 +6,7 @@ use super::decoder::*;
 use super::MMIOInterface;
 use super::Processor;
 
-const sign_bit: u8 = 7;
+const SIGN_BIT: u8 = 7;
 
 pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
@@ -29,7 +29,7 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let result_c = p.get_a().wrapping_add(carry);
     let result = result_c.wrapping_add(operand);
 
-    let negative = is_bit_set_at(result, sign_bit);
+    let negative = is_bit_set_at(result, SIGN_BIT);
 
     // CHECK is this equivalent to the spec?
     let overflow_a = is_overflow(result_c, carry, p.get_a());
@@ -67,7 +67,7 @@ pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
 
     let result = p.get_a() & operand;
 
-    let negative = is_bit_set_at(result, sign_bit);
+    let negative = is_bit_set_at(result, SIGN_BIT);
     let zero = result == 0;
 
     p.set_negative(negative);
@@ -90,9 +90,9 @@ pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
 
     let result = operand << 1;
 
-    let negative = is_bit_set_at(result, sign_bit);
+    let negative = is_bit_set_at(result, SIGN_BIT);
     let zero = result == 0;
-    let carry = is_bit_set_at(operand, sign_bit);
+    let carry = is_bit_set_at(operand, SIGN_BIT);
 
     p.set_negative(negative);
     p.set_zero(zero);
@@ -577,7 +577,7 @@ fn concatenate_address(addr: (u8, u8)) -> u16 {
 /// * `bool` - `true` if bit at `pos` is set.
 ///
 fn is_bit_set_at(value: u8, pos: u8) -> bool {
-    if pos > sign_bit {
+    if pos > SIGN_BIT {
         false
     } else {
         value >> pos & 0x01 != 0
@@ -599,9 +599,9 @@ fn is_bit_set_at(value: u8, pos: u8) -> bool {
 fn is_overflow(result: u8, operand_a: u8, operand_b: u8) -> bool {
     // TEST
 
-    let a = is_bit_set_at(operand_a, sign_bit);
-    let b = is_bit_set_at(operand_b, sign_bit);
-    let r = is_bit_set_at(result, sign_bit);
+    let a = is_bit_set_at(operand_a, SIGN_BIT);
+    let b = is_bit_set_at(operand_b, SIGN_BIT);
+    let r = is_bit_set_at(result, SIGN_BIT);
 
     // is true if sign bits of a or b are equal and the sign bits of a, b or r are not equal
     (a & b | !a & !b) & !(r & a | !r & !a)
