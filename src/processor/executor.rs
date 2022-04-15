@@ -124,7 +124,7 @@ pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
     }
 }
 
-pub(super) fn bbs(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn bbs(p: &mut Processor, _a: AddressingModes, opcode: u8) {
     // TEST
 
     let offset = relative(p);
@@ -147,12 +147,24 @@ pub(super) fn bbs(p: &mut Processor, a: AddressingModes, opcode: u8) {
     }
 }
 
-pub(super) fn bcc(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bcc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if !p.is_carry_set() {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn bcs(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let offset = relative(p);
+
+    if p.is_carry_set() {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn beq(p: &mut Processor, a: AddressingModes, opcode: u8) {
