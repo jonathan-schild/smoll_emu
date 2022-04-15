@@ -101,8 +101,27 @@ pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
     p.set_a(result);
 }
 
-pub(super) fn bbr(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+    let accumulator = p.get_a();
+
+    let set = match opcode {
+        0x0F => is_bit_set_at(accumulator, 0),
+        0x1F => is_bit_set_at(accumulator, 1),
+        0x2F => is_bit_set_at(accumulator, 2),
+        0x3F => is_bit_set_at(accumulator, 3),
+        0x4F => is_bit_set_at(accumulator, 4),
+        0x5F => is_bit_set_at(accumulator, 5),
+        0x6F => is_bit_set_at(accumulator, 6),
+        0x7F => is_bit_set_at(accumulator, 7),
+        _ => false,
+    };
+
+    if !set {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn bbs(p: &mut Processor, a: AddressingModes, opcode: u8) {
@@ -378,7 +397,7 @@ fn absolute_address(p: &mut Processor) -> u8 {
 
     let pc = p.get_pc();
     p.offset_pc(2);
-    let addr = (p.load(pc + 1), p.load(pc));
+    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
     p.load(concatenate_address(addr))
 }
 
@@ -387,7 +406,7 @@ fn absolute_indexed_with_x(p: &mut Processor) -> u8 {
 
     let pc = p.get_pc();
     p.offset_pc(2);
-    let addr = (p.load(pc + 1), p.load(pc));
+    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
     p.load(concatenate_address(addr).wrapping_add(p.get_x() as u16))
 }
 
@@ -396,7 +415,7 @@ fn absolute_indexed_with_y(p: &mut Processor) -> u8 {
 
     let pc = p.get_pc();
     p.offset_pc(2);
-    let addr = (p.load(pc + 1), p.load(pc));
+    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
     p.load(concatenate_address(addr).wrapping_add(p.get_y() as u16))
 }
 
@@ -406,6 +425,14 @@ fn immediate(p: &mut Processor) -> u8 {
     let operand = p.load(p.get_pc());
     p.increment_pc();
     operand
+}
+
+fn relative(p: &mut Processor) -> u8 {
+    // TEST
+
+    let pc = p.get_pc();
+    p.offset_pc(1);
+    p.load(pc)
 }
 
 fn zero_page(p: &mut Processor) -> u8 {

@@ -63,7 +63,7 @@ impl Processor {
         // TODO
     }
 
-    fn offset_pc(&mut self, offset: u16) {
+    fn offset_pc(&mut self, offset: u8) {
         // TODO
     }
 
