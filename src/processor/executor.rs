@@ -116,7 +116,7 @@ pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
         0x5F => is_bit_set_at(accumulator, 5),
         0x6F => is_bit_set_at(accumulator, 6),
         0x7F => is_bit_set_at(accumulator, 7),
-        _ => false,
+        _ => true,
     };
 
     if !set {
@@ -125,7 +125,26 @@ pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
 }
 
 pub(super) fn bbs(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let offset = relative(p);
+    let accumulator = p.get_a();
+
+    let set = match opcode {
+        0x8F => is_bit_set_at(accumulator, 0),
+        0x9F => is_bit_set_at(accumulator, 1),
+        0xAF => is_bit_set_at(accumulator, 2),
+        0xBF => is_bit_set_at(accumulator, 3),
+        0xCF => is_bit_set_at(accumulator, 4),
+        0xDF => is_bit_set_at(accumulator, 5),
+        0xEF => is_bit_set_at(accumulator, 6),
+        0xFF => is_bit_set_at(accumulator, 7),
+        _ => false,
+    };
+
+    if set {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn bcc(p: &mut Processor, a: AddressingModes, opcode: u8) {
