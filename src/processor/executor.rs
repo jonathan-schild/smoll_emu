@@ -157,7 +157,7 @@ pub(super) fn bcc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     }
 }
 
-pub(super) fn bcs(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn bcs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let offset = relative(p);
@@ -167,40 +167,79 @@ pub(super) fn bcs(p: &mut Processor, a: AddressingModes, opcode: u8) {
     }
 }
 
-pub(super) fn beq(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn beq(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if p.is_zero_set() {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn bit(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn bmi(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bmi(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if p.is_negative_set() {
+        p.offset_pc(offset);
+    }
 }
 
-pub(super) fn bne(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bne(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if !p.is_zero_set() {
+        p.offset_pc(offset);
+    }
 }
 
-pub(super) fn bpl(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bpl(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if !p.is_negative_set() {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn bra(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let offset = relative(p);
+    p.offset_pc(offset);
 }
 
 pub(super) fn brk(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn bvc(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bvc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if !p.is_overflow_set() {
+        p.offset_pc(offset);
+    }
 }
 
-pub(super) fn bvs(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bvs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let offset = relative(p);
+
+    if p.is_overflow_set() {
+        p.offset_pc(offset);
+    }
 }
 
 pub(super) fn clc(p: &mut Processor, a: AddressingModes, opcode: u8) {
