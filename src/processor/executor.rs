@@ -6,6 +6,8 @@ use super::decoder::*;
 use super::MMIOInterface;
 use super::Processor;
 
+// FIXME Write back to Memory not to Accumulator
+
 const SIGN_BIT: u8 = 7;
 
 pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
