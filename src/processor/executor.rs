@@ -431,11 +431,21 @@ pub(super) fn stz(p: &mut Processor, a: AddressingModes, opcode: u8) {
 }
 
 pub(super) fn tax(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let value = p.get_a();
+    p.set_negative(is_bit_set_at(value, SIGN_BIT));
+    p.set_zero(value == 0);
+    p.set_x(value);
 }
 
 pub(super) fn tay(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let value = p.get_a();
+    p.set_negative(is_bit_set_at(value, SIGN_BIT));
+    p.set_zero(value == 0);
+    p.set_y(value);
 }
 
 pub(super) fn trb(p: &mut Processor, a: AddressingModes, opcode: u8) {
@@ -447,19 +457,37 @@ pub(super) fn tsb(p: &mut Processor, a: AddressingModes, opcode: u8) {
 }
 
 pub(super) fn tsx(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let value = p.get_stack();
+    p.set_negative(is_bit_set_at(value, SIGN_BIT));
+    p.set_zero(value == 0);
+    p.set_x(value);
 }
 
 pub(super) fn txa(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let value = p.get_x();
+    p.set_negative(is_bit_set_at(value, SIGN_BIT));
+    p.set_zero(value == 0);
+    p.set_a(value);
 }
 
 pub(super) fn txs(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let value = p.get_x();
+    p.set_stack(value);
 }
 
 pub(super) fn tya(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let value = p.get_y();
+    p.set_negative(is_bit_set_at(value, SIGN_BIT));
+    p.set_zero(value == 0);
+    p.set_a(value);
 }
 
 pub(super) fn wai(p: &mut Processor, a: AddressingModes, opcode: u8) {

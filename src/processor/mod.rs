@@ -71,14 +71,14 @@ impl Processor {
         self.pc
     }
 
-    fn set_stack(&mut self, stack: u16) {
+    fn set_stack(&mut self, stack: u8) {
         // TODO
-        self.stack = stack as u8;
+        self.stack = stack;
     }
 
-    fn get_stack(&self) -> u16 {
+    fn get_stack(&self) -> u8 {
         // TODO
-        self.stack as u16
+        self.stack
     }
 
     fn is_negative_set(&self) -> bool {
