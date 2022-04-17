@@ -242,20 +242,28 @@ pub(super) fn bvs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     }
 }
 
-pub(super) fn clc(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn clc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    p.set_carry(false);
 }
 
-pub(super) fn cld(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn cld(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    p.set_decimal(false);
 }
 
-pub(super) fn cli(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn cli(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    p.set_brake(false);
 }
 
-pub(super) fn clv(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn clv(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    p.set_overflow(false);
 }
 
 pub(super) fn cmp(p: &mut Processor, a: AddressingModes, opcode: u8) {
