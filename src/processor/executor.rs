@@ -266,16 +266,106 @@ pub(super) fn clv(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     p.set_overflow(false);
 }
 
-pub(super) fn cmp(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn cmp(p: &mut Processor, a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let mut operand = match a {
+        AddressingModes::Absolute => absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
+        AddressingModes::AbsoluteIndexedWithY => absolute_indexed_with_y(p),
+        AddressingModes::Immediate => immediate(p),
+        AddressingModes::ZeroPage => zero_page(p),
+        AddressingModes::ZeroPageIndexedIndirect => zero_page_indexed_indirect(p),
+        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
+        AddressingModes::ZeroPageIndirect => zero_page_indirect(p),
+        AddressingModes::ZeroPageIndirectIndexedWithY => zero_page_indirect_indexed_with_y(p),
+        _ => return,
+    };
+
+    operand = -(operand as i8) as u8;
+
+    let result = p.get_a().wrapping_sub(operand);
+
+    let negative = is_bit_set_at(result, SIGN_BIT);
+
+    // CHECK is this equivalent to the spec?
+    let overflow = is_overflow(result, operand, p.get_a());
+
+    let zero = result == 0;
+
+    // CHECK is this equivalent to the spec?
+    let carry = is_carry(result, operand, p.get_a());
+
+    p.set_negative(negative);
+    p.set_overflow(overflow);
+    p.set_zero(zero);
+    p.set_carry(carry);
+
+    p.set_a(result);
 }
 
-pub(super) fn cpx(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn cpx(p: &mut Processor, a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let mut operand = match a {
+        AddressingModes::Absolute => absolute_address(p),
+        AddressingModes::Immediate => immediate(p),
+        AddressingModes::ZeroPage => zero_page(p),
+        _ => return,
+    };
+
+    operand = -(operand as i8) as u8;
+
+    let result = p.get_x().wrapping_sub(operand);
+
+    let negative = is_bit_set_at(result, SIGN_BIT);
+
+    // CHECK is this equivalent to the spec?
+    let overflow = is_overflow(result, operand, p.get_x());
+
+    let zero = result == 0;
+
+    // CHECK is this equivalent to the spec?
+    let carry = is_carry(result, operand, p.get_x());
+
+    p.set_negative(negative);
+    p.set_overflow(overflow);
+    p.set_zero(zero);
+    p.set_carry(carry);
+
+    p.set_x(result);
 }
 
-pub(super) fn cpy(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn cpy(p: &mut Processor, a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let mut operand = match a {
+        AddressingModes::Absolute => absolute_address(p),
+        AddressingModes::Immediate => immediate(p),
+        AddressingModes::ZeroPage => zero_page(p),
+        _ => return,
+    };
+
+    operand = -(operand as i8) as u8;
+
+    let result = p.get_y().wrapping_sub(operand);
+
+    let negative = is_bit_set_at(result, SIGN_BIT);
+
+    // CHECK is this equivalent to the spec?
+    let overflow = is_overflow(result, operand, p.get_y());
+
+    let zero = result == 0;
+
+    // CHECK is this equivalent to the spec?
+    let carry = is_carry(result, operand, p.get_y());
+
+    p.set_negative(negative);
+    p.set_overflow(overflow);
+    p.set_zero(zero);
+    p.set_carry(carry);
+
+    p.set_y(result);
 }
 
 pub(super) fn dec(p: &mut Processor, a: AddressingModes, opcode: u8) {
@@ -430,7 +520,7 @@ pub(super) fn stz(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn tax(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn tax(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let value = p.get_a();
@@ -439,7 +529,7 @@ pub(super) fn tax(p: &mut Processor, a: AddressingModes, opcode: u8) {
     p.set_x(value);
 }
 
-pub(super) fn tay(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn tay(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let value = p.get_a();
@@ -456,7 +546,7 @@ pub(super) fn tsb(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn tsx(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn tsx(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let value = p.get_stack();
@@ -465,7 +555,7 @@ pub(super) fn tsx(p: &mut Processor, a: AddressingModes, opcode: u8) {
     p.set_x(value);
 }
 
-pub(super) fn txa(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn txa(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let value = p.get_x();
@@ -474,14 +564,14 @@ pub(super) fn txa(p: &mut Processor, a: AddressingModes, opcode: u8) {
     p.set_a(value);
 }
 
-pub(super) fn txs(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn txs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let value = p.get_x();
     p.set_stack(value);
 }
 
-pub(super) fn tya(p: &mut Processor, a: AddressingModes, opcode: u8) {
+pub(super) fn tya(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
     let value = p.get_y();
