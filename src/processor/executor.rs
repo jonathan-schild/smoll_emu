@@ -177,8 +177,26 @@ pub(super) fn beq(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     }
 }
 
-pub(super) fn bit(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn bit(p: &mut Processor, a: AddressingModes, _opcode: u8) {
+    // TEST
+
+    let operand = match a {
+        AddressingModes::Absolute => absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
+        AddressingModes::Immediate => immediate(p),
+        AddressingModes::ZeroPage => zero_page(p),
+        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
+        _ => return,
+    };
+
+    p.set_negative(is_bit_set_at(operand, 7));
+    p.set_overflow(is_bit_set_at(operand, 6));
+
+    let result = p.get_a() & operand;
+
+    p.set_zero(result == 0);
+
+    p.set_a(result);
 }
 
 pub(super) fn bmi(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
