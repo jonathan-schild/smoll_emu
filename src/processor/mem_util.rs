@@ -14,6 +14,12 @@ pub(super) fn load_operand_address_absolute_address(p: &mut Processor) -> u16 {
     concatenate_address(addr)
 }
 
+pub(super) fn load_operand_address_absolute_indexed_indirect(p: &mut Processor) -> u16 {
+    // TODO
+
+    0
+}
+
 pub(super) fn load_operand_address_absolute_indexed_with_x(p: &mut Processor) -> u16 {
     // TEST
 
@@ -30,6 +36,12 @@ pub(super) fn load_operand_address_absolute_indexed_with_y(p: &mut Processor) ->
     p.offset_pc(2);
     let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
     concatenate_address(addr).wrapping_add(p.get_y() as u16)
+}
+
+pub(super) fn load_operand_address_absolute_indirect(p: &mut Processor) -> u16 {
+    // TODO
+
+    0
 }
 
 pub(super) fn load_operand_address_zero_page(p: &mut Processor) -> u16 {
@@ -83,18 +95,33 @@ pub(super) fn load_operand_address_zero_page_indirect_indexed_with_y(p: &mut Pro
 }
 
 pub(super) fn load_operand_absolute_address(p: &mut Processor) -> u8 {
+    // TEST
+
+    let addr = load_operand_address_absolute_address(p);
+    p.load(addr)
+}
+
+pub(super) fn load_operand_absolute_indexed_indirect(p: &mut Processor) -> u16 {
     // TODO
 
     0
 }
 
 pub(super) fn load_operand_absolute_indexed_with_x(p: &mut Processor) -> u8 {
-    // TODO
+    // TEST
 
-    0
+    let addr = load_operand_address_absolute_indexed_with_x(p);
+    p.load(addr)
 }
 
 pub(super) fn load_operand_absolute_indexed_with_y(p: &mut Processor) -> u8 {
+    // TEST
+
+    let addr = load_operand_address_absolute_indexed_with_y(p);
+    p.load(addr)
+}
+
+pub(super) fn load_operand_absolute_indirect(p: &mut Processor) -> u16 {
     // TODO
 
     0
@@ -112,42 +139,50 @@ pub(super) fn load_operand_relative(p: &mut Processor) -> u8 {
     // TEST
 
     let pc = p.get_pc();
-    p.offset_pc(1);
+    p.increment_pc();
     p.load(pc)
 }
 
 pub(super) fn load_operand_zero_page(p: &mut Processor) -> u8 {
-    // TODO
+    // TEST
 
-    0
+    let addr = load_operand_address_zero_page(p);
+    p.load(addr)
 }
 
 pub(super) fn load_operand_zero_page_indexed_indirect(p: &mut Processor) -> u8 {
-    // TODO
+    // TEST
 
-    0
+    let addr = load_operand_address_zero_page_indexed_indirect(p);
+    p.load(addr)
 }
 
 pub(super) fn load_operand_zero_page_indexed_with_x(p: &mut Processor) -> u8 {
-    // TODO
+    // TEST
 
-    0
+    let addr = load_operand_address_zero_page_indexed_with_x(p);
+    p.load(addr)
 }
 
 pub(super) fn load_operand_zero_page_indexed_with_y(p: &mut Processor) -> u8 {
-    // TODO
+    // TEST
 
-    0
+    let addr = load_operand_address_zero_page_indexed_with_y(p);
+    p.load(addr)
 }
 
 pub(super) fn load_operand_zero_page_indirect(p: &mut Processor) -> u8 {
-    // TODO
-    0
+    // TEST
+
+    let addr = load_operand_address_zero_page_indirect(p);
+    p.load(addr)
 }
 
 pub(super) fn load_operand_zero_page_indirect_indexed_with_y(p: &mut Processor) -> u8 {
-    // TODO
-    0
+    // TEST
+
+    let addr = load_operand_address_zero_page_indirect_indexed_with_y(p);
+    p.load(addr)
 }
 
 /// Concatenates two bytes to a 16 bit address.
