@@ -25,6 +25,7 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
         AddressingModes::ZeroPageIndirectIndexedWithY => {
             load_operand_zero_page_indirect_indexed_with_y(p)
         }
+
         _ => return,
     };
 

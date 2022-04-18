@@ -5,31 +5,99 @@
 use super::MMIOInterface;
 use super::Processor;
 
-pub(super) fn load_operand_absolute_address(p: &mut Processor) -> u8 {
+pub(super) fn load_operand_address_absolute_address(p: &mut Processor) -> u16 {
     // TEST
 
     let pc = p.get_pc();
     p.offset_pc(2);
     let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
-    p.load(concatenate_address(addr))
+    concatenate_address(addr)
+}
+
+pub(super) fn load_operand_address_absolute_indexed_with_x(p: &mut Processor) -> u16 {
+    // TEST
+
+    let pc = p.get_pc();
+    p.offset_pc(2);
+    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
+    concatenate_address(addr).wrapping_add(p.get_x() as u16)
+}
+
+pub(super) fn load_operand_address_absolute_indexed_with_y(p: &mut Processor) -> u16 {
+    // TEST
+
+    let pc = p.get_pc();
+    p.offset_pc(2);
+    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
+    concatenate_address(addr).wrapping_add(p.get_y() as u16)
+}
+
+pub(super) fn load_operand_address_zero_page(p: &mut Processor) -> u16 {
+    // TEST
+
+    let addr = p.load(p.get_pc());
+    p.increment_pc();
+    concatenate_address((0, addr))
+}
+
+pub(super) fn load_operand_address_zero_page_indexed_indirect(p: &mut Processor) -> u16 {
+    // TEST
+
+    let mut addr = p.load(p.get_pc());
+    p.increment_pc();
+    addr = addr.wrapping_add(p.get_x());
+    let mut addr_indirect = concatenate_address((0, addr));
+    concatenate_address((p.load(addr_indirect.wrapping_add(1)), p.load(addr_indirect)))
+}
+
+pub(super) fn load_operand_address_zero_page_indexed_with_x(p: &mut Processor) -> u16 {
+    // TEST
+
+    let addr = p.load(p.get_pc());
+    p.increment_pc();
+    concatenate_address((0, addr.wrapping_add(p.get_x())))
+}
+
+pub(super) fn load_operand_address_zero_page_indexed_with_y(p: &mut Processor) -> u16 {
+    // TEST
+
+    let addr = p.load(p.get_pc());
+    p.increment_pc();
+    concatenate_address((0, addr.wrapping_add(p.get_y())))
+}
+
+pub(super) fn load_operand_address_zero_page_indirect(p: &mut Processor) -> u16 {
+    // TEST
+
+    let addr = p.load(p.get_pc());
+    p.increment_pc();
+    let addr_indirect = concatenate_address((0, addr));
+    concatenate_address((p.load(addr_indirect.wrapping_add(1)), p.load(addr_indirect)))
+}
+
+pub(super) fn load_operand_address_zero_page_indirect_indexed_with_y(p: &mut Processor) -> u16 {
+    // TEST
+
+    let mut addr = concatenate_address((0, p.load(p.get_pc())));
+    addr.wrapping_add(p.get_y() as u16)
+}
+
+pub(super) fn load_operand_absolute_address(p: &mut Processor) -> u8 {
+    // TODO
+
+    0
 }
 
 pub(super) fn load_operand_absolute_indexed_with_x(p: &mut Processor) -> u8 {
-    // TEST
+    // TODO
 
-    let pc = p.get_pc();
-    p.offset_pc(2);
-    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
-    p.load(concatenate_address(addr).wrapping_add(p.get_x() as u16))
+    0
 }
 
 pub(super) fn load_operand_absolute_indexed_with_y(p: &mut Processor) -> u8 {
-    // TEST
+    // TODO
 
-    let pc = p.get_pc();
-    p.offset_pc(2);
-    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
-    p.load(concatenate_address(addr).wrapping_add(p.get_y() as u16))
+    0
 }
 
 pub(super) fn load_operand_immediate(p: &mut Processor) -> u8 {
@@ -49,36 +117,27 @@ pub(super) fn load_operand_relative(p: &mut Processor) -> u8 {
 }
 
 pub(super) fn load_operand_zero_page(p: &mut Processor) -> u8 {
-    // TEST
+    // TODO
 
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    p.load(concatenate_address((0, addr)))
+    0
 }
 
 pub(super) fn load_operand_zero_page_indexed_indirect(p: &mut Processor) -> u8 {
-    // TEST
-
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
     // TODO
+
     0
 }
 
 pub(super) fn load_operand_zero_page_indexed_with_x(p: &mut Processor) -> u8 {
-    // TEST
+    // TODO
 
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    p.load(concatenate_address((0, addr.wrapping_add(p.get_x()))))
+    0
 }
 
 pub(super) fn load_operand_zero_page_indexed_with_y(p: &mut Processor) -> u8 {
-    // TEST
+    // TODO
 
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    p.load(concatenate_address((0, addr.wrapping_add(p.get_y()))))
+    0
 }
 
 pub(super) fn load_operand_zero_page_indirect(p: &mut Processor) -> u8 {
