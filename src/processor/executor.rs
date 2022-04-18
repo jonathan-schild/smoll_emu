@@ -3,7 +3,7 @@
  */
 
 use super::decoder::*;
-use super::MMIOInterface;
+use super::mem_util::*;
 use super::Processor;
 
 // FIXME Write back to Memory not to Accumulator
@@ -614,107 +614,6 @@ pub(super) fn unknown(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-fn load_operand_absolute_address(p: &mut Processor) -> u8 {
-    // TEST
-
-    let pc = p.get_pc();
-    p.offset_pc(2);
-    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
-    p.load(concatenate_address(addr))
-}
-
-fn load_operand_absolute_indexed_with_x(p: &mut Processor) -> u8 {
-    // TEST
-
-    let pc = p.get_pc();
-    p.offset_pc(2);
-    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
-    p.load(concatenate_address(addr).wrapping_add(p.get_x() as u16))
-}
-
-fn load_operand_absolute_indexed_with_y(p: &mut Processor) -> u8 {
-    // TEST
-
-    let pc = p.get_pc();
-    p.offset_pc(2);
-    let addr = (p.load(pc.wrapping_add(1)), p.load(pc));
-    p.load(concatenate_address(addr).wrapping_add(p.get_y() as u16))
-}
-
-fn load_operand_immediate(p: &mut Processor) -> u8 {
-    // TEST
-
-    let operand = p.load(p.get_pc());
-    p.increment_pc();
-    operand
-}
-
-fn load_operand_relative(p: &mut Processor) -> u8 {
-    // TEST
-
-    let pc = p.get_pc();
-    p.offset_pc(1);
-    p.load(pc)
-}
-
-fn load_operand_zero_page(p: &mut Processor) -> u8 {
-    // TEST
-
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    p.load(concatenate_address((0, addr)))
-}
-
-fn load_operand_zero_page_indexed_indirect(p: &mut Processor) -> u8 {
-    // TEST
-
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    // TODO
-    0
-}
-
-fn load_operand_zero_page_indexed_with_x(p: &mut Processor) -> u8 {
-    // TEST
-
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    p.load(concatenate_address((0, addr.wrapping_add(p.get_x()))))
-}
-
-fn load_operand_zero_page_indexed_with_y(p: &mut Processor) -> u8 {
-    // TEST
-
-    let addr = p.load(p.get_pc());
-    p.increment_pc();
-    p.load(concatenate_address((0, addr.wrapping_add(p.get_y()))))
-}
-
-fn load_operand_zero_page_indirect(p: &mut Processor) -> u8 {
-    // TODO
-    0
-}
-
-fn load_operand_zero_page_indirect_indexed_with_y(p: &mut Processor) -> u8 {
-    // TODO
-    0
-}
-
-/// Concatenates two bytes to a 16 bit address.
-///
-/// # Arguments
-///
-/// * `addr: (u8, u8)` - Tuple containing (high byte, low byte).
-///
-/// # Returns
-///
-/// * `u16` - 16 bit address.
-///
-fn concatenate_address(addr: (u8, u8)) -> u16 {
-    let (high, low) = addr;
-    (high as u16) << 8 | low as u16
-}
-
 /// Returns `true` if `bit` is set at position `pos`.
 ///
 /// If `pos` is greater than 7, `false` is returned.
@@ -779,16 +678,6 @@ fn has_carry_occurred(result: u8, operand_a: u8, operand_b: u8) -> bool {
 mod tests {
 
     use super::*;
-
-    #[test]
-    fn test_concatenate_address() {
-        assert_eq!(0xFFFF, concatenate_address((0xFF, 0xFF)));
-        assert_eq!(0xFF00, concatenate_address((0xFF, 0x00)));
-        assert_eq!(0x00FF, concatenate_address((0x00, 0xFF)));
-        assert_eq!(0x01FF, concatenate_address((0x01, 0xFF)));
-        assert_eq!(0xFF01, concatenate_address((0xFF, 0x01)));
-        assert_eq!(0x1234, concatenate_address((0x12, 0x34)));
-    }
 
     #[test]
     fn test_is_bit_set_at_true() {

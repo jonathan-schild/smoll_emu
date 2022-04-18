@@ -4,6 +4,7 @@
 
 mod decoder;
 mod executor;
+mod mem_util;
 
 use std::cell::RefCell;
 use std::rc::Rc;
