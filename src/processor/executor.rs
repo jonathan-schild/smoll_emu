@@ -2,11 +2,11 @@
  * Copyright (C) 2022 Jonathan Schild - All Rights Reserved
  */
 
+use crate::peripheral_devices::MMIOInterface;
+
 use super::decoder::*;
 use super::mem_util::*;
 use super::Processor;
-
-// FIXME Write back to Memory not to Accumulator
 
 const SIGN_BIT: u8 = 7;
 
@@ -86,15 +86,27 @@ pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
 pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TEST
 
-    let operand = match a {
-        AddressingModes::Absolute => load_operand_absolute_address(p),
-        AddressingModes::AbsoluteIndexedWithX => load_operand_absolute_indexed_with_x(p),
-        AddressingModes::Accumulator => p.get_a(),
-        AddressingModes::ZeroPage => load_operand_zero_page(p),
-        AddressingModes::ZeroPageIndexedWithX => load_operand_zero_page_indexed_with_x(p),
-        _ => return,
-    };
+    let operand_address;
+    let operand;
 
+    if let AddressingModes::Accumulator = a {
+        operand = p.get_a();
+        operand_address = 0;
+    } else {
+        operand_address = match a {
+            AddressingModes::Absolute => load_operand_address_absolute_address(p),
+            AddressingModes::AbsoluteIndexedWithX => {
+                load_operand_address_absolute_indexed_with_x(p)
+            }
+            AddressingModes::ZeroPage => load_operand_address_zero_page(p),
+            AddressingModes::ZeroPageIndexedWithX => {
+                load_operand_address_zero_page_indexed_with_x(p)
+            }
+            _ => return,
+        };
+
+        operand = p.load(operand_address);
+    }
     let result = operand << 1;
 
     let negative = is_bit_set_at(result, SIGN_BIT);
@@ -105,7 +117,11 @@ pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
     p.set_zero(zero);
     p.set_carry(carry);
 
-    p.set_a(result);
+    if let AddressingModes::Accumulator = a {
+        p.set_a(result);
+    } else {
+        p.store(operand_address, result);
+    }
 }
 
 pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
@@ -202,8 +218,6 @@ pub(super) fn bit(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let result = p.get_a() & operand;
 
     p.set_zero(result == 0);
-
-    p.set_a(result);
 }
 
 pub(super) fn bmi(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
@@ -327,8 +341,6 @@ pub(super) fn cmp(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     p.set_overflow(overflow);
     p.set_zero(zero);
     p.set_carry(carry);
-
-    p.set_a(result);
 }
 
 pub(super) fn cpx(p: &mut Processor, a: AddressingModes, _opcode: u8) {
@@ -359,8 +371,6 @@ pub(super) fn cpx(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     p.set_overflow(overflow);
     p.set_zero(zero);
     p.set_carry(carry);
-
-    p.set_x(result);
 }
 
 pub(super) fn cpy(p: &mut Processor, a: AddressingModes, _opcode: u8) {
@@ -391,8 +401,6 @@ pub(super) fn cpy(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     p.set_overflow(overflow);
     p.set_zero(zero);
     p.set_carry(carry);
-
-    p.set_y(result);
 }
 
 pub(super) fn dec(p: &mut Processor, a: AddressingModes, opcode: u8) {
