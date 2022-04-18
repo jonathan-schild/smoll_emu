@@ -14,15 +14,17 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
     let operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
-        AddressingModes::AbsoluteIndexedWithY => absolute_indexed_with_y(p),
-        AddressingModes::Immediate => immediate(p),
-        AddressingModes::ZeroPage => zero_page(p),
-        AddressingModes::ZeroPageIndexedIndirect => zero_page_indexed_indirect(p),
-        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
-        AddressingModes::ZeroPageIndirect => zero_page_indirect(p),
-        AddressingModes::ZeroPageIndirectIndexedWithY => zero_page_indirect_indexed_with_y(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => load_operand_absolute_indexed_with_x(p),
+        AddressingModes::AbsoluteIndexedWithY => load_operand_absolute_indexed_with_y(p),
+        AddressingModes::Immediate => load_operand_immediate(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
+        AddressingModes::ZeroPageIndexedIndirect => load_operand_zero_page_indexed_indirect(p),
+        AddressingModes::ZeroPageIndexedWithX => load_operand_zero_page_indexed_with_x(p),
+        AddressingModes::ZeroPageIndirect => load_operand_zero_page_indirect(p),
+        AddressingModes::ZeroPageIndirectIndexedWithY => {
+            load_operand_zero_page_indirect_indexed_with_y(p)
+        }
         _ => return,
     };
 
@@ -34,14 +36,14 @@ pub(super) fn adc(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let negative = is_bit_set_at(result, SIGN_BIT);
 
     // CHECK is this equivalent to the spec?
-    let overflow_a = is_overflow(result_c, carry, p.get_a());
-    let overflow_b = is_overflow(result, result_c, operand);
+    let overflow_a = has_overflow_occurred(result_c, carry, p.get_a());
+    let overflow_b = has_overflow_occurred(result, result_c, operand);
 
     let zero = result == 0;
 
     // CHECK is this equivalent to the spec?
-    let carry_a = is_carry(result_c, carry, p.get_a());
-    let carry_b = is_carry(result, result_c, operand);
+    let carry_a = has_carry_occurred(result_c, carry, p.get_a());
+    let carry_b = has_carry_occurred(result, result_c, operand);
 
     p.set_negative(negative);
     p.set_overflow(overflow_a | overflow_b);
@@ -55,15 +57,17 @@ pub(super) fn and(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
     let operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
-        AddressingModes::AbsoluteIndexedWithY => absolute_indexed_with_y(p),
-        AddressingModes::Immediate => immediate(p),
-        AddressingModes::ZeroPage => zero_page(p),
-        AddressingModes::ZeroPageIndexedIndirect => zero_page_indexed_indirect(p),
-        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
-        AddressingModes::ZeroPageIndirect => zero_page_indirect(p),
-        AddressingModes::ZeroPageIndirectIndexedWithY => zero_page_indirect_indexed_with_y(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => load_operand_absolute_indexed_with_x(p),
+        AddressingModes::AbsoluteIndexedWithY => load_operand_absolute_indexed_with_y(p),
+        AddressingModes::Immediate => load_operand_immediate(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
+        AddressingModes::ZeroPageIndexedIndirect => load_operand_zero_page_indexed_indirect(p),
+        AddressingModes::ZeroPageIndexedWithX => load_operand_zero_page_indexed_with_x(p),
+        AddressingModes::ZeroPageIndirect => load_operand_zero_page_indirect(p),
+        AddressingModes::ZeroPageIndirectIndexedWithY => {
+            load_operand_zero_page_indirect_indexed_with_y(p)
+        }
         _ => return,
     };
 
@@ -82,11 +86,11 @@ pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TEST
 
     let operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => load_operand_absolute_indexed_with_x(p),
         AddressingModes::Accumulator => p.get_a(),
-        AddressingModes::ZeroPage => zero_page(p),
-        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
+        AddressingModes::ZeroPageIndexedWithX => load_operand_zero_page_indexed_with_x(p),
         _ => return,
     };
 
@@ -106,7 +110,7 @@ pub(super) fn asl(p: &mut Processor, a: AddressingModes, opcode: u8) {
 pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
     let accumulator = p.get_a();
 
     let set = match opcode {
@@ -129,7 +133,7 @@ pub(super) fn bbr(p: &mut Processor, _a: AddressingModes, opcode: u8) {
 pub(super) fn bbs(p: &mut Processor, _a: AddressingModes, opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
     let accumulator = p.get_a();
 
     let set = match opcode {
@@ -152,7 +156,7 @@ pub(super) fn bbs(p: &mut Processor, _a: AddressingModes, opcode: u8) {
 pub(super) fn bcc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if !p.is_carry_set() {
         p.offset_pc(offset);
@@ -162,7 +166,7 @@ pub(super) fn bcc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 pub(super) fn bcs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if p.is_carry_set() {
         p.offset_pc(offset);
@@ -172,7 +176,7 @@ pub(super) fn bcs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 pub(super) fn beq(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if p.is_zero_set() {
         p.offset_pc(offset);
@@ -183,11 +187,11 @@ pub(super) fn bit(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
     let operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
-        AddressingModes::Immediate => immediate(p),
-        AddressingModes::ZeroPage => zero_page(p),
-        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => load_operand_absolute_indexed_with_x(p),
+        AddressingModes::Immediate => load_operand_immediate(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
+        AddressingModes::ZeroPageIndexedWithX => load_operand_zero_page_indexed_with_x(p),
         _ => return,
     };
 
@@ -204,7 +208,7 @@ pub(super) fn bit(p: &mut Processor, a: AddressingModes, _opcode: u8) {
 pub(super) fn bmi(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if p.is_negative_set() {
         p.offset_pc(offset);
@@ -214,7 +218,7 @@ pub(super) fn bmi(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 pub(super) fn bne(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if !p.is_zero_set() {
         p.offset_pc(offset);
@@ -224,7 +228,7 @@ pub(super) fn bne(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 pub(super) fn bpl(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if !p.is_negative_set() {
         p.offset_pc(offset);
@@ -234,7 +238,7 @@ pub(super) fn bpl(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 pub(super) fn bra(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
     p.offset_pc(offset);
 }
 
@@ -245,7 +249,7 @@ pub(super) fn brk(p: &mut Processor, a: AddressingModes, opcode: u8) {
 pub(super) fn bvc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if !p.is_overflow_set() {
         p.offset_pc(offset);
@@ -255,7 +259,7 @@ pub(super) fn bvc(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 pub(super) fn bvs(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
     // TEST
 
-    let offset = relative(p);
+    let offset = load_operand_relative(p);
 
     if p.is_overflow_set() {
         p.offset_pc(offset);
@@ -290,15 +294,17 @@ pub(super) fn cmp(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
     let mut operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::AbsoluteIndexedWithX => absolute_indexed_with_x(p),
-        AddressingModes::AbsoluteIndexedWithY => absolute_indexed_with_y(p),
-        AddressingModes::Immediate => immediate(p),
-        AddressingModes::ZeroPage => zero_page(p),
-        AddressingModes::ZeroPageIndexedIndirect => zero_page_indexed_indirect(p),
-        AddressingModes::ZeroPageIndexedWithX => zero_page_indexed_with_x(p),
-        AddressingModes::ZeroPageIndirect => zero_page_indirect(p),
-        AddressingModes::ZeroPageIndirectIndexedWithY => zero_page_indirect_indexed_with_y(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::AbsoluteIndexedWithX => load_operand_absolute_indexed_with_x(p),
+        AddressingModes::AbsoluteIndexedWithY => load_operand_absolute_indexed_with_y(p),
+        AddressingModes::Immediate => load_operand_immediate(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
+        AddressingModes::ZeroPageIndexedIndirect => load_operand_zero_page_indexed_indirect(p),
+        AddressingModes::ZeroPageIndexedWithX => load_operand_zero_page_indexed_with_x(p),
+        AddressingModes::ZeroPageIndirect => load_operand_zero_page_indirect(p),
+        AddressingModes::ZeroPageIndirectIndexedWithY => {
+            load_operand_zero_page_indirect_indexed_with_y(p)
+        }
         _ => return,
     };
 
@@ -309,12 +315,12 @@ pub(super) fn cmp(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let negative = is_bit_set_at(result, SIGN_BIT);
 
     // CHECK is this equivalent to the spec?
-    let overflow = is_overflow(result, operand, p.get_a());
+    let overflow = has_overflow_occurred(result, operand, p.get_a());
 
     let zero = result == 0;
 
     // CHECK is this equivalent to the spec?
-    let carry = is_carry(result, operand, p.get_a());
+    let carry = has_carry_occurred(result, operand, p.get_a());
 
     p.set_negative(negative);
     p.set_overflow(overflow);
@@ -328,9 +334,9 @@ pub(super) fn cpx(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
     let mut operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::Immediate => immediate(p),
-        AddressingModes::ZeroPage => zero_page(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::Immediate => load_operand_immediate(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
         _ => return,
     };
 
@@ -341,12 +347,12 @@ pub(super) fn cpx(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let negative = is_bit_set_at(result, SIGN_BIT);
 
     // CHECK is this equivalent to the spec?
-    let overflow = is_overflow(result, operand, p.get_x());
+    let overflow = has_overflow_occurred(result, operand, p.get_x());
 
     let zero = result == 0;
 
     // CHECK is this equivalent to the spec?
-    let carry = is_carry(result, operand, p.get_x());
+    let carry = has_carry_occurred(result, operand, p.get_x());
 
     p.set_negative(negative);
     p.set_overflow(overflow);
@@ -360,9 +366,9 @@ pub(super) fn cpy(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     // TEST
 
     let mut operand = match a {
-        AddressingModes::Absolute => absolute_address(p),
-        AddressingModes::Immediate => immediate(p),
-        AddressingModes::ZeroPage => zero_page(p),
+        AddressingModes::Absolute => load_operand_absolute_address(p),
+        AddressingModes::Immediate => load_operand_immediate(p),
+        AddressingModes::ZeroPage => load_operand_zero_page(p),
         _ => return,
     };
 
@@ -373,12 +379,12 @@ pub(super) fn cpy(p: &mut Processor, a: AddressingModes, _opcode: u8) {
     let negative = is_bit_set_at(result, SIGN_BIT);
 
     // CHECK is this equivalent to the spec?
-    let overflow = is_overflow(result, operand, p.get_y());
+    let overflow = has_overflow_occurred(result, operand, p.get_y());
 
     let zero = result == 0;
 
     // CHECK is this equivalent to the spec?
-    let carry = is_carry(result, operand, p.get_y());
+    let carry = has_carry_occurred(result, operand, p.get_y());
 
     p.set_negative(negative);
     p.set_overflow(overflow);
@@ -608,7 +614,7 @@ pub(super) fn unknown(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-fn absolute_address(p: &mut Processor) -> u8 {
+fn load_operand_absolute_address(p: &mut Processor) -> u8 {
     // TEST
 
     let pc = p.get_pc();
@@ -617,7 +623,7 @@ fn absolute_address(p: &mut Processor) -> u8 {
     p.load(concatenate_address(addr))
 }
 
-fn absolute_indexed_with_x(p: &mut Processor) -> u8 {
+fn load_operand_absolute_indexed_with_x(p: &mut Processor) -> u8 {
     // TEST
 
     let pc = p.get_pc();
@@ -626,7 +632,7 @@ fn absolute_indexed_with_x(p: &mut Processor) -> u8 {
     p.load(concatenate_address(addr).wrapping_add(p.get_x() as u16))
 }
 
-fn absolute_indexed_with_y(p: &mut Processor) -> u8 {
+fn load_operand_absolute_indexed_with_y(p: &mut Processor) -> u8 {
     // TEST
 
     let pc = p.get_pc();
@@ -635,7 +641,7 @@ fn absolute_indexed_with_y(p: &mut Processor) -> u8 {
     p.load(concatenate_address(addr).wrapping_add(p.get_y() as u16))
 }
 
-fn immediate(p: &mut Processor) -> u8 {
+fn load_operand_immediate(p: &mut Processor) -> u8 {
     // TEST
 
     let operand = p.load(p.get_pc());
@@ -643,7 +649,7 @@ fn immediate(p: &mut Processor) -> u8 {
     operand
 }
 
-fn relative(p: &mut Processor) -> u8 {
+fn load_operand_relative(p: &mut Processor) -> u8 {
     // TEST
 
     let pc = p.get_pc();
@@ -651,7 +657,7 @@ fn relative(p: &mut Processor) -> u8 {
     p.load(pc)
 }
 
-fn zero_page(p: &mut Processor) -> u8 {
+fn load_operand_zero_page(p: &mut Processor) -> u8 {
     // TEST
 
     let addr = p.load(p.get_pc());
@@ -659,7 +665,7 @@ fn zero_page(p: &mut Processor) -> u8 {
     p.load(concatenate_address((0, addr)))
 }
 
-fn zero_page_indexed_indirect(p: &mut Processor) -> u8 {
+fn load_operand_zero_page_indexed_indirect(p: &mut Processor) -> u8 {
     // TEST
 
     let addr = p.load(p.get_pc());
@@ -668,7 +674,7 @@ fn zero_page_indexed_indirect(p: &mut Processor) -> u8 {
     0
 }
 
-fn zero_page_indexed_with_x(p: &mut Processor) -> u8 {
+fn load_operand_zero_page_indexed_with_x(p: &mut Processor) -> u8 {
     // TEST
 
     let addr = p.load(p.get_pc());
@@ -676,7 +682,7 @@ fn zero_page_indexed_with_x(p: &mut Processor) -> u8 {
     p.load(concatenate_address((0, addr.wrapping_add(p.get_x()))))
 }
 
-fn zero_page_indexed_with_y(p: &mut Processor) -> u8 {
+fn load_operand_zero_page_indexed_with_y(p: &mut Processor) -> u8 {
     // TEST
 
     let addr = p.load(p.get_pc());
@@ -684,12 +690,12 @@ fn zero_page_indexed_with_y(p: &mut Processor) -> u8 {
     p.load(concatenate_address((0, addr.wrapping_add(p.get_y()))))
 }
 
-fn zero_page_indirect(p: &mut Processor) -> u8 {
+fn load_operand_zero_page_indirect(p: &mut Processor) -> u8 {
     // TODO
     0
 }
 
-fn zero_page_indirect_indexed_with_y(p: &mut Processor) -> u8 {
+fn load_operand_zero_page_indirect_indexed_with_y(p: &mut Processor) -> u8 {
     // TODO
     0
 }
@@ -742,7 +748,7 @@ fn is_bit_set_at(value: u8, pos: u8) -> bool {
 ///
 /// * `bool` - `true` if a two's complement overflow occurred.
 ///
-fn is_overflow(result: u8, operand_a: u8, operand_b: u8) -> bool {
+fn has_overflow_occurred(result: u8, operand_a: u8, operand_b: u8) -> bool {
     // TEST
 
     let a = is_bit_set_at(operand_a, SIGN_BIT);
@@ -765,7 +771,7 @@ fn is_overflow(result: u8, operand_a: u8, operand_b: u8) -> bool {
 ///
 /// * `bool` - `true` if a carry occurred.
 ///
-fn is_carry(result: u8, operand_a: u8, operand_b: u8) -> bool {
+fn has_carry_occurred(result: u8, operand_a: u8, operand_b: u8) -> bool {
     (result < operand_a) | (result < operand_b)
 }
 
@@ -812,7 +818,7 @@ mod tests {
     }
 
     #[test]
-    fn test_is_carry() {
+    fn test_has_carry_occurred() {
         let a: u8 = 0xFF;
         let b: u8 = 0x01;
         let c: u8 = 0xFE;
@@ -820,10 +826,10 @@ mod tests {
         let e: u8 = 0x02;
         let f: u8 = 0x03;
 
-        assert_eq!(true, is_carry(d, a, b));
-        assert_eq!(true, is_carry(c, a, a));
+        assert_eq!(true, has_carry_occurred(d, a, b));
+        assert_eq!(true, has_carry_occurred(c, a, a));
 
-        assert_eq!(false, is_carry(e, b, b));
-        assert_eq!(false, is_carry(f, e, b));
+        assert_eq!(false, has_carry_occurred(e, b, b));
+        assert_eq!(false, has_carry_occurred(f, e, b));
     }
 }
