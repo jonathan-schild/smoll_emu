@@ -498,8 +498,8 @@ pub(super) fn ply(p: &mut Processor, a: AddressingModes, opcode: u8) {
 pub(super) fn rmb(p: &mut Processor, _a: AddressingModes, opcode: u8) {
     // TEST
 
-    let opernad_addr = load_operand_address_zero_page(p);
-    let mut operand = p.load(opernad_addr);
+    let operand_addr = load_operand_address_zero_page(p);
+    let mut operand = p.load(operand_addr);
 
     match opcode {
         0x07 => operand = operand & !(0x01 << 0),
@@ -513,7 +513,7 @@ pub(super) fn rmb(p: &mut Processor, _a: AddressingModes, opcode: u8) {
         _ => return,
     };
 
-    p.store(opernad_addr, operand);
+    p.store(operand_addr, operand);
 }
 
 pub(super) fn rol(p: &mut Processor, a: AddressingModes, opcode: u8) {
