@@ -574,11 +574,39 @@ pub(super) fn tay(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
 }
 
 pub(super) fn trb(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let operand_addr = match a {
+        AddressingModes::Absolute => load_operand_address_absolute_address(p),
+        AddressingModes::ZeroPage => load_operand_address_zero_page(p),
+        _ => return,
+    };
+
+    let mut operand = p.load(operand_addr);
+
+    operand = !operand & p.get_a();
+
+    p.set_zero(operand == 0);
+
+    p.store(operand_addr, operand);
 }
 
 pub(super) fn tsb(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+    // TEST
+
+    let operand_addr = match a {
+        AddressingModes::Absolute => load_operand_address_absolute_address(p),
+        AddressingModes::ZeroPage => load_operand_address_zero_page(p),
+        _ => return,
+    };
+
+    let mut operand = p.load(operand_addr);
+
+    operand = operand | p.get_a();
+
+    p.set_zero(operand == 0);
+
+    p.store(operand_addr, operand);
 }
 
 pub(super) fn tsx(p: &mut Processor, _a: AddressingModes, _opcode: u8) {
