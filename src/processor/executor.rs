@@ -495,8 +495,25 @@ pub(super) fn ply(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn rmb(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn rmb(p: &mut Processor, _a: AddressingModes, opcode: u8) {
+    // TEST
+
+    let opernad_addr = load_operand_address_zero_page(p);
+    let mut operand = p.load(opernad_addr);
+
+    match opcode {
+        0x07 => operand = operand & !(0x01 << 0),
+        0x17 => operand = operand & !(0x01 << 1),
+        0x27 => operand = operand & !(0x01 << 2),
+        0x37 => operand = operand & !(0x01 << 3),
+        0x47 => operand = operand & !(0x01 << 4),
+        0x57 => operand = operand & !(0x01 << 5),
+        0x67 => operand = operand & !(0x01 << 6),
+        0x77 => operand = operand & !(0x01 << 7),
+        _ => return,
+    };
+
+    p.store(opernad_addr, operand);
 }
 
 pub(super) fn rol(p: &mut Processor, a: AddressingModes, opcode: u8) {
@@ -531,8 +548,25 @@ pub(super) fn sei(p: &mut Processor, a: AddressingModes, opcode: u8) {
     // TODO
 }
 
-pub(super) fn smb(p: &mut Processor, a: AddressingModes, opcode: u8) {
-    // TODO
+pub(super) fn smb(p: &mut Processor, _a: AddressingModes, opcode: u8) {
+    // TEST
+
+    let opernad_addr = load_operand_address_zero_page(p);
+    let mut operand = p.load(opernad_addr);
+
+    match opcode {
+        0x87 => operand = operand | 0x01 << 0,
+        0x97 => operand = operand | 0x01 << 1,
+        0xA7 => operand = operand | 0x01 << 2,
+        0xB7 => operand = operand | 0x01 << 3,
+        0xC7 => operand = operand | 0x01 << 4,
+        0xD7 => operand = operand | 0x01 << 5,
+        0xE7 => operand = operand | 0x01 << 6,
+        0xF7 => operand = operand | 0x01 << 7,
+        _ => return,
+    };
+
+    p.store(opernad_addr, operand);
 }
 
 pub(super) fn sta(p: &mut Processor, a: AddressingModes, opcode: u8) {
